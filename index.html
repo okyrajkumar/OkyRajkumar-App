@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OkyRajkumar App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Lobster&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* CSS is unchanged - using original color definitions */
+        :root {
+            --bg-color: #f3f4f6; --card-bg: #ffffff; --text-color: #1f2937; --text-secondary: #6b7280;
+            --primary-color: #3b82f6; --border-color: #e5e7eb; --danger-color: #ef4444; --success-color: #10b981;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); --radius: 16px;
+        }
+        body.dark-mode {
+            --bg-color: #0b1120; --card-bg: #151e32; --text-color: #f9fafb; --text-secondary: #9ca3af;
+            --primary-color: #3b82f6; --border-color: #1f2937; --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; min-height: 100vh; }
+        #app-container { width: 100%; max-width: 480px; background-color: var(--bg-color); min-height: 100vh; position: relative; display: flex; flex-direction: column; overflow-x: hidden; }
+        .brand-font { font-family: 'Lobster', cursive; letter-spacing: 1px; font-weight: 400 !important; }
+        header { background-color: var(--bg-color); padding: 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+        .app-title { font-size: 1.5rem; color: var(--primary-color); }
+        .settings-btn { font-size: 1.2rem; color: var(--text-color); background: var(--card-bg); padding: 10px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow); cursor: pointer; border: 1px solid var(--border-color); }
+        #splash-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #0b1120; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 999; }
+        .splash-logo-img { width: 150px; height: 150px; margin-bottom: 20px; border-radius: 50%; object-fit: contain; }
+        .card { background: var(--card-bg); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); cursor: pointer; border: 1px solid var(--border-color); height: 120px; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: transform 0.1s; }
+        .card:active { transform: scale(0.96); }
+        .card-icon-circle { width: 45px; height: 45px; background: rgba(59, 130, 246, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+        .card i { font-size: 1.2rem; color: var(--primary-color); }
+        .card h3 { font-size: 0.9rem; font-weight: 500; color: var(--text-color); }
+        .full-width-card { grid-column: span 2; background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; color: white; height: 140px; }
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .upcoming-banner { background: linear-gradient(135deg, #10b981, #059669); padding: 20px; border-radius: 16px; color: white; margin-bottom: 15px; box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3); display: flex; justify-content: space-between; align-items: center; }
+        .exam-banner { background: linear-gradient(135deg, #8b5cf6, #7c3aed); padding: 20px; border-radius: 16px; color: white; margin-bottom: 20px; box-shadow: 0 10px 15px -3px rgba(139, 92, 246, 0.3); display: flex; justify-content: space-between; align-items: center; }
+        .day-tabs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; scrollbar-width: none; }
+        .day-pill { padding: 8px 16px; border-radius: 20px; background: var(--card-bg); color: var(--text-secondary); font-size: 0.9rem; font-weight: 500; white-space: nowrap; border: 1px solid var(--border-color); cursor: pointer; }
+        .day-pill.active { background: #3b82f6; color: white; border-color: #3b82f6; }
+        .tt-card { background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 10px; border-left: 4px solid var(--primary-color); box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center; }
+        .fab { position: fixed; bottom: 80px; right: 20px; width: 56px; height: 56px; background-color: var(--primary-color); color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); cursor: pointer; z-index: 90; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 200; display: none; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(5px); }
+        .modal { background: var(--card-bg); width: 100%; max-width: 350px; border-radius: 16px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .screen { display: none; padding: 20px; animation: fadeIn 0.3s ease; padding-bottom: 100px; flex-grow: 1; }
+        .active-screen { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .setting-item { background: var(--card-bg); padding: 15px; border-radius: 12px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); }
+        input, select { width: 100%; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 1rem; outline: none; background: var(--card-bg); color: var(--text-color); }
+        textarea { width: 100%; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 1rem; outline: none; background: var(--card-bg); color: var(--text-color); min-height: 150px; }
+        .btn-primary { width: 100%; padding: 15px; background-color: var(--primary-color); color: white; border: none; border-radius: 12px; font-size: 1rem; cursor: pointer; font-weight: 600; }
+        .btn-text { background: transparent; color: var(--text-secondary); border: none; padding: 10px; cursor: pointer; font-weight: 500;}
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;}
+        .back-nav { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 1.1rem; color: var(--text-color); margin-bottom: 20px;}
+        .app-footer { text-align: center; padding: 20px; margin-top: auto; color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; letter-spacing: 0.5px; }
+        .not-available-box { text-align: center; padding: 30px; color: var(--text-secondary); border: 2px dashed var(--border-color); border-radius: 12px; margin-top: 10px; }
+        .att-btn { padding: 10px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; font-size: 0.9rem; }
+        .btn-p { background: rgba(16, 185, 129, 0.15); color: var(--success-color); }
+        .btn-a { background: rgba(239, 68, 68, 0.15); color: var(--danger-color); }
+        .att-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: var(--shadow); }
+        .att-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .att-stats-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .progress-track { background: var(--border-color); height: 8px; border-radius: 4px; margin-bottom: 15px; }
+        .progress-bar { height: 100%; border-radius: 4px; transition: width 0.3s ease; }
+        .att-buttons { display: flex; gap: 10px; }
+        .att-buttons button { flex: 1; }
+        .log-entry { background: var(--card-bg); border: 1px solid var(--border-color); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-start; }
+        .log-content h4 { margin-bottom: 5px; font-weight: 600; }
+        .log-content p { font-size: 0.9rem; color: var(--text-secondary); white-space: pre-wrap; word-break: break-word; }
+        .log-entry i { color: var(--danger-color); cursor: pointer; margin-left: 10px; margin-top: 3px; }
+        .res-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 10px; }
+        .res-btn { background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 12px; text-align: center; font-weight: 600; color: var(--text-color); box-shadow: var(--shadow); cursor: pointer; transition: transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .res-btn:active { transform: scale(0.97); background-color: var(--bg-color); }
+        .cgpa-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+        .cgpa-row input:first-child { flex: 3; }
+        .cgpa-row input:nth-child(2), .cgpa-row input:nth-child(3) { flex: 1; max-width: 80px; }
+        .cgpa-row input { margin-bottom: 0px !important; padding: 10px !important; }
+        .cgpa-row i.fa-times { margin-left: 5px; flex-shrink: 0; }
+        #cgpa-rows .cgpa-row input { flex: 1; }
+        .font-control { display: flex; align-items: center; gap: 10px; }
+        .font-slider { flex-grow: 1; padding: 0; margin: 0; }
+        .toggle-switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary-color); }
+        input:checked + .slider:before { transform: translateX(26px); }
+    </style>
+</head>
+<body class="dark-mode">
+
+<div id="app-container">
+    <div id="splash-screen">
+        <img src="Only OR LOGO.png" alt="OkyRajkumar Logo" class="splash-logo-img">
+        <h1 class="brand-font" style="font-size:2rem;">OkyRajkumar</h1>
+        <p style="opacity:0.7; font-size:0.9rem;">Ok Begins Where Rajkumar Leads</p>
+    </div>
+
+    <header id="main-header" style="display:none;">
+        <div class="app-title brand-font" id="header-title">OkyRajkumar</div>
+        <div class="settings-btn" onclick="navigateTo('settings-screen', 'Settings')"><i class="fas fa-cog"></i></div>
+    </header>
+
+    <div id="home-screen" class="screen">
+        <div class="upcoming-banner" id="upcoming-banner">
+            <div class="upcoming-info"><h4>Upcoming Class</h4><h2 id="banner-subject">Loading...</h2><p id="banner-time">Please wait...</p></div>
+            <div class="upcoming-icon"><i class="fas fa-clock"></i></div>
+        </div>
+        <div class="exam-banner" id="exam-banner">
+            <div class="exam-info"><h4>Exam Reminder</h4><h2 id="exam-banner-subject">Loading...</h2><p id="exam-banner-days">Checking dates...</p></div>
+            <div class="exam-icon"><i class="fas fa-edit"></i></div>
+        </div>
+        <div class="dashboard-grid">
+            <div class="card full-width-card" onclick="startStudyZone()"><div class="card-icon-circle"><i class="fas fa-book-reader"></i></div><h3>Study Zone</h3><p>Notes, Syllabus & PYQs</p></div>
+            <div class="card" onclick="openStudyLog()"><div class="card-icon-circle"><i class="fas fa-sticky-note"></i></div><h3>Study Log</h3></div>
+            <div class="card" onclick="openNotices()"><div class="card-icon-circle"><i class="fas fa-bell"></i></div><h3>Orders/Notices</h3></div>
+            <div class="card" onclick="openAttendance()"><div class="card-icon-circle"><i class="fas fa-chart-bar"></i></div><h3>Attendance</h3></div>
+            <div class="card" onclick="openTimeTable()"><div class="card-icon-circle"><i class="fas fa-clock"></i></div><h3>Time Table</h3></div>
+            <div class="card" onclick="openExamPlanner()"><div class="card-icon-circle"><i class="fas fa-calendar-check"></i></div><h3>Exam Planner</h3></div>
+            <div class="card" onclick="openCGPA()"><div class="card-icon-circle"><i class="fas fa-calculator"></i></div><h3>CGPA/SGPA</h3></div>
+        </div>
+    </div>
+    
+    <div id="timetable-screen" class="screen">
+        <div class="back-nav" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</div>
+        <div class="day-tabs" id="day-tabs">
+            <div class="day-pill active" onclick="switchDay('Monday', this)">Mon</div>
+            <div class="day-pill" onclick="switchDay('Tuesday', this)">Tue</div>
+            <div class="day-pill" onclick="switchDay('Wednesday', this)">Wed</div>
+            <div class="day-pill" onclick="switchDay('Thursday', this)">Thu</div>
+            <div class="day-pill" onclick="switchDay('Friday', this)">Fri</div>
+            <div class="day-pill" onclick="switchDay('Saturday', this)">Sat</div>
+        </div>
+        <h3 id="tt-day-title" style="margin-bottom:15px; color:var(--text-color);">Monday's Schedule</h3>
+        <div id="timetable-list"></div>
+        <div class="fab" onclick="openTTModal()"><i class="fas fa-plus"></i></div>
+    </div>
+    
+    <div class="modal-overlay" id="tt-modal" onclick="closeTTModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <h3>Add Class</h3>
+            <input type="text" id="tt-subject" placeholder="Subject (e.g. Maths)">
+            <label for="tt-start-time" style="font-size:0.9rem; color:var(--text-secondary); margin-bottom: 5px; display:block;">Start Time</label>
+            <input type="time" id="tt-start-time" style="margin-top:-10px;">
+            <label for="tt-end-time" style="font-size:0.9rem; color:var(--text-secondary); margin-bottom: 5px; display:block;">End Time</label>
+            <input type="time" id="tt-end-time" style="margin-top:-10px;">
+            <input type="text" id="tt-room" placeholder="Room (e.g. 204)">
+            <div class="modal-actions"><button class="btn-text" onclick="closeTTModal()">Cancel</button><button class="btn-primary" style="width:auto; padding:10px 20px;" onclick="addTimeTableEntry()">Save</button></div>
+        </div>
+    </div>
+
+    <div id="study-log-screen" class="screen">
+        <div class="back-nav" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</div>
+        <h2 style="margin-bottom: 20px;">Study Log</h2>
+        <div id="log-list"></div>
+        <div class="fab" onclick="openLogModal()"><i class="fas fa-plus"></i></div>
+    </div>
+    
+    <div class="modal-overlay" id="log-modal" onclick="closeLogModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <h3>New Log Entry</h3>
+            <input type="text" id="log-title" placeholder="Title (e.g. Next Class Test)">
+            <textarea id="log-content" placeholder="Type your notes or reminder here..."></textarea>
+            <div class="modal-actions"><button class="btn-text" onclick="closeLogModal()">Cancel</button><button class="btn-primary" style="width:auto; padding:10px 20px;" onclick="saveLogEntry()">Save</button></div>
+        </div>
+    </div>
+
+    <div id="attendance-screen" class="screen">
+        <div class="back-nav" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</div>
+        <div style="background: var(--card-bg); padding: 15px; border-radius: 12px; margin-bottom: 20px; border:1px solid var(--border-color);">
+            <input type="text" id="new-att-subject" placeholder="Enter Subject (e.g., DSA)" style="margin-bottom:10px;">
+            <button class="btn-primary" onclick="addAttendanceSubject()">+ Add Subject</button>
+        </div>
+        <div id="attendance-list"></div>
+    </div>
+    
+    <div id="exam-screen" class="screen">
+        <div class="back-nav" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</div>
+        <div style="background: var(--card-bg); padding: 15px; border-radius: 12px; margin-bottom: 20px; border:1px solid var(--border-color);">
+            <input type="text" id="exam-subject" placeholder="Subject Name">
+            <input type="date" id="exam-date">
+            <button class="btn-primary" onclick="addExam()">Add Exam</button>
+        </div>
+        <div id="exam-list"></div>
+    </div>
+    
+    <div id="cgpa-screen" class="screen">
+        <div class="back-nav" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</div>
+        <div style="display:flex; margin-bottom:20px; background:var(--card-bg); padding:5px; border-radius:10px;">
+            <button class="btn-primary" id="btn-sgpa" onclick="switchCalc('sgpa')" style="flex:1; margin-right:5px;">SGPA</button>
+            <button class="btn-primary" id="btn-cgpa" onclick="switchCalc('cgpa')" style="flex:1; background:transparent; color:var(--text-color); box-shadow:none;">CGPA</button>
+        </div>
+        <div id="sgpa-panel">
+            <div style="display:flex; gap:10px; margin-bottom:10px; font-weight:600; color:var(--primary-color);">
+                <div style="flex:3;">Subject</div>
+                <div style="flex:1; max-width:80px; text-align:center;">Credit</div>
+                <div style="flex:1; max-width:80px; text-align:center;">Grade</div>
+                <div style="width:20px;"></div>
+            </div>
+            <div id="sgpa-rows"></div>
+            <button class="btn-primary" onclick="addSGPARow()" style="margin-top:10px; background:#4b5563;">+ Add Subject</button>
+            <button class="btn-primary" onclick="calculateSGPA()" style="margin-top:10px;">Calculate Result</button>
+            <div id="sgpa-result" style="text-align:center; margin-top:20px; display:none; background:var(--card-bg); padding:20px; border-radius:12px;">
+                <h3>SGPA</h3>
+                <h2 id="sgpa-value" style="color:var(--primary-color); font-size:2.5rem;">0.00</h2>
+            </div>
+        </div>
+        <div id="cgpa-panel" style="display:none;">
+            <div style="display:flex; gap:10px; margin-bottom:10px; font-weight:600; color:var(--primary-color);">
+                <div style="flex:1; text-align:center;">Semester SGPA</div>
+                <div style="width:20px;"></div>
+            </div>
+            <div id="cgpa-rows"></div>
+            <button class="btn-primary" onclick="addCGPARow()" style="margin-top:10px; background:#4b5563;">+ Add Semester</button>
+            <button class="btn-primary" onclick="calculateFinalCGPA()" style="margin-top:10px;">Calculate Result</button>
+            <div id="cgpa-result" style="text-align:center; margin-top:20px; display:none; background:var(--card-bg); padding:20px; border-radius:12px;">
+                <h3>CGPA</h3>
+                <h2 id="cgpa-value" style="color:var(--primary-color); font-size:2.5rem;">0.00</h2>
+            </div>
+        </div>
+    </div>
+    
+    <div id="year-select-screen" class="screen">
+        <div class="back-nav" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</div>
+        <h3 style="margin-bottom:15px;">Select Year (Notes)</h3>
+        <div class="setting-item" onclick="loadSubjects('1st Year')"><span>1st Year</span><i class="fas fa-chevron-right"></i></div>
+        <div class="setting-item" onclick="navigateTo('branch-select-screen', 'Select Branch')"><span>2nd Year</span><i class="fas fa-chevron-right"></i></div>
+        <div class="setting-item" onclick="navigateTo('branch-select-screen-3rd', '3rd Year')"><span>3rd Year</span><i class="fas fa-chevron-right"></i></div>
+        
+        <h3 style="margin-bottom:15px; margin-top:30px;">Resources</h3>
+        <div class="dashboard-grid">
+            <div class="card" onclick="navigateTo('pyq-select-screen', 'PYQ Section')"><div class="card-icon-circle"><i class="fas fa-file-alt"></i></div><h3>PYQs</h3></div>
+            <div class="card" onclick="navigateTo('syllabus-select-screen', 'Syllabus Section')"><div class="card-icon-circle"><i class="fas fa-list"></i></div><h3>Syllabus</h3></div>
+            <div class="card" onclick="navigateTo('work-select-screen', 'Work Section')"><div class="card-icon-circle"><i class="fas fa-hard-hat"></i></div><h3>Work</h3></div>
+        </div>
+    </div>
+
+    <div id="branch-select-screen" class="screen">
+        <div class="back-nav" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</div>
+        <h3>2nd Year</h3>
+        <label>Branch</label>
+        <select id="branch-select">
+            <option value="CS">Computer Science</option>
+            <option value="IT">Information Technology</option>
+            <option value="Cyber">Cyber Security</option>
+            <option value="AIML">Artificial Intelligence & ML</option>
+        </select>
+        <label>Semester</label>
+        <select id="sem-select">
+            <option value="3rd">3rd Semester</option>
+            <option value="4th">4th Semester</option>
+        </select>
+        <button class="btn-primary" onclick="load2ndYearSubjects()">View Subjects</button>
+    </div>
+
+    <div id="branch-select-screen-3rd" class="screen">
+        <div class="back-nav" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</div>
+        <h3>3rd Year</h3>
+        <label>Branch</label>
+        <select id="branch-select-3rd">
+            <option value="CS">Computer Science</option>
+            <option value="IT">Information Technology</option>
+            <option value="Cyber">Cyber Security</option>
+            <option value="AIML">Artificial Intelligence & ML</option>
+        </select>
+        <label>Semester</label>
+        <select id="sem-select-3rd">
+            <option value="5th">5th Semester</option>
+            <option value="6th">6th Semester</option>
+        </select>
+        <button class="btn-primary" onclick="load3rdYearSubjects()">View Subjects</button>
+    </div>
+    
+    <div id="pyq-select-screen" class="screen">
+        <div class="back-nav" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</div>
+        <h3 style="margin-bottom: 20px;">Previous Year Questions</h3>
+        <div class="res-grid">
+            <div class="res-btn" onclick="handleResourceClick('PYQ_1st', '1st Year PYQ')"><i class="fas fa-graduation-cap"></i> 1st Year PYQ</div>
+            <div class="res-btn" onclick="handleResourceClick('PYQ_3rd', '3rd Sem PYQ')"><i class="fas fa-graduation-cap"></i> 3rd Sem PYQ</div>
+            <div class="res-btn" onclick="handleResourceClick('PYQ_4th', '4th Sem PYQ')"><i class="fas fa-graduation-cap"></i> 4th Sem PYQ</div>
+            <div class="res-btn" onclick="handleResourceClick('PYQ_5th', '5th Sem PYQ')"><i class="fas fa-graduation-cap"></i> 5th Sem PYQ</div>
+            <div class="res-btn" onclick="handleResourceClick('PYQ_6th', '6th Sem PYQ')"><i class="fas fa-graduation-cap"></i> 6th Sem PYQ</div>
+            <div class="res-btn" onclick="handleResourceClick('PYQ_7th', '7th Sem PYQ')"><i class="fas fa-graduation-cap"></i> 7th Sem PYQ</div>
+            <div class="res-btn" onclick="handleResourceClick('PYQ_8th', '8th Sem PYQ')"><i class="fas fa-graduation-cap"></i> 8th Sem PYQ</div>
+        </div>
+    </div>
+
+    <div id="syllabus-select-screen" class="screen">
+        <div class="back-nav" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</div>
+        <h3 style="margin-bottom: 20px;">Syllabus</h3>
+        <div class="res-grid">
+            <div class="res-btn" onclick="handleResourceClick('Syl_1st', '1st Year Syllabus')"><i class="fas fa-list-alt"></i> 1st Year Syllabus</div>
+            <div class="res-btn" onclick="handleResourceClick('Syl_2nd', '2nd Year Syllabus')"><i class="fas fa-list-alt"></i> 2nd Year Syllabus</div>
+            <div class="res-btn" onclick="handleResourceClick('Syl_3rd', '3rd Year Syllabus')"><i class="fas fa-list-alt"></i> 3rd Year Syllabus</div>
+            <div class="res-btn" onclick="handleResourceClick('Syl_4th', '4th Year Syllabus')"><i class="fas fa-list-alt"></i> 4th Year Syllabus</div>
+        </div>
+    </div>
+    
+    <div id="work-select-screen" class="screen">
+        <div class="back-nav" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</div>
+        <h3 style="margin-bottom: 5px;">Work</h3>
+        <p style="color:var(--danger-color); font-size: 0.9rem; margin-bottom: 20px;">Only for IT (2k24-28) Batch</p>
+        <div class="res-grid">
+            <div class="res-btn" onclick="handleResourceClick('Work_Theory', 'Work Theory')"><i class="fas fa-lightbulb"></i> Theory</div>
+            <div class="res-btn" onclick="handleResourceClick('Work_Practical', 'Work Practical')"><i class="fas fa-code"></i> Practical</div>
+        </div>
+    </div>
+    
+    <div id="subject-list-screen" class="screen"><div class="back-nav" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</div><h3 id="subject-list-title">Subjects</h3><div id="subjects-container" style="margin-top:15px;"></div></div>
+
+    <div id="subject-dashboard-screen" class="screen">
+        <div class="back-nav" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</div>
+        <h2 id="current-subject-name" style="color:var(--primary-color); margin-bottom:20px;">Subject</h2>
+        <div class="card full-width-card" onclick="openResource('Notes')" style="flex-direction: row; gap: 20px; height: 100px;">
+            <div class="card-icon-circle"><i class="fas fa-book"></i></div>
+            <h3 style="font-size: 1.2rem;">Notes</h3>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="resource-modal" onclick="closeResourceModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <h3 id="resource-modal-title">Not Available</h3>
+            <p id="resource-subject-name" style="color:var(--text-secondary); margin-bottom:15px; font-size:0.9rem;">File Missing</p>
+            <div id="resource-list" style="display:flex; flex-direction:column; gap:10px; max-height:250px; overflow-y:auto;"></div>
+            <div style="text-align:right; margin-top:15px;">
+                <button class="btn-text" onclick="closeResourceModal()">Close</button>
+            </div>
+        </div>
+    </div>
+    <div id="notices-screen" class="screen">
+        <div class="back-nav" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</div>
+        <div id="notices-list"></div>
+    </div>
+
+    <div id="settings-screen" class="screen">
+        <div class="back-nav" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</div>
+        <h2 style="margin-bottom: 20px;">Settings</h2>
+        <div class="setting-item">
+            <div><h4>Dark Theme</h4></div>
+            <label class="toggle-switch">
+                <input type="checkbox" id="theme-toggle" checked onchange="toggleTheme()">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="setting-item" style="display:block;">
+            <div style="margin-bottom:10px;"><h4>Font Size</h4></div>
+            <div class="font-control">
+                <span style="font-size:0.8rem">A</span>
+                <input type="range" min="14" max="20" value="16" class="font-slider" id="font-slider" oninput="changeFontSize(this.value)">
+                <span style="font-size:1.2rem">A</span>
+            </div>
+        </div>
+        <div class="setting-item" onclick="navigateTo('contact-screen', 'Contact Us')" style="cursor:pointer;">
+            <div><h4>Contact Us</h4></div><i class="fas fa-chevron-right" style="color:var(--text-secondary);"></i>
+        </div>
+    
+        <div class="setting-item" onclick="resetApp()" style="cursor:pointer; border:1px solid var(--danger-color);">
+            <div><h4 style="color:var(--danger-color)">Reset App Data</h4><p style="font-size:0.8rem; color:var(--text-secondary);">Clear all saved Time Table, Logs, and settings.</p></div>
+            <i class="fas fa-redo" style="color:var(--danger-color);"></i>
+        </div>
+    </div>
+    
+    <div id="contact-screen" class="screen">
+        <div class="back-nav" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</div>
+        <div style="text-align:center; margin-top:40px;">
+            <img src="OK PIC.png" alt="Rajkumar Profile" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--primary-color); margin-bottom: 20px;">
+            <h2 style="font-size: 2rem; color: var(--primary-color);">Rajkumar Tailor</h2>
+            <p style="color:var(--text-secondary); font-size: 1.1rem; margin-top: 5px;">Developer & Owner</p>
+            <a href="mailto:okyrajkumarbusiness@gmail.com" style="display:block; margin-top:15px; color:var(--text-color); font-weight: 500;">okyrajkumarbusiness@gmail.com</a>
+            <button class="btn-primary" onclick="openExternalLink('https://www.linkedin.com/in/rajkumar-tailor-435666318?utm_source=share_via&utm_content=profile&utm_medium=member_android')" style="width:auto; margin-top:20px; display:inline-flex; align-items:center; gap:10px;">
+                <i class="fab fa-linkedin" style="font-size:1.2rem; color:white;"></i> LinkedIn
+            </button>
+        </div>
+    </div>
+    
+    <footer class="app-footer">Powered By OkyRajkumar</footer>
+</div>
+<script>
+    // --- Part 5: Navigation, Theme & On-Load Logic (FIX: Always start at Home Screen) ---
+    
+    let screenHistory = []; 
+
+    // 1. Theme and Font Management (Unchanged)
+    const initialTheme = localStorage.getItem('theme') || 'dark';
+    const themeToggleElement = document.getElementById('theme-toggle');
+    
+    if (initialTheme === 'dark') { 
+        document.body.classList.add('dark-mode'); 
+        if(themeToggleElement) themeToggleElement.checked = true; 
+    } else { 
+        document.body.classList.remove('dark-mode'); 
+        if(themeToggleElement) themeToggleElement.checked = false; 
+    }
+
+    function toggleTheme() { 
+        document.body.classList.toggle('dark-mode'); 
+        localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); 
+    }
+    function changeFontSize(val) { document.documentElement.style.fontSize = val + 'px'; }
+    function resetApp() {
+        if (confirm("Are you sure you want to reset ALL app data (Time Table, Logs, Attendance, Exams, Settings)? This cannot be undone.")) {
+            localStorage.clear();
+            alert("App data cleared. Please refresh the page.");
+            setTimeout(() => window.location.reload(), 100); 
+        }
+    }
+
+    // 2. Navigation Core Logic (Stable for Compilers)
+    function navigateTo(id, title) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen')); 
+        const targetScreen = document.getElementById(id);
+        
+        if (targetScreen) {
+            targetScreen.classList.add('active-screen');
+        } else {
+            console.error(`Screen ID not found: ${id}. Redirecting to home.`);
+            id = 'home-screen';
+            document.getElementById(id).classList.add('active-screen');
+        }
+
+        const currentTitle = document.getElementById('header-title');
+
+        // Manage internal screen history stack
+        const stackTop = screenHistory[screenHistory.length - 1];
+        if (stackTop !== id) {
+             screenHistory.push(id);
+        }
+
+        // Handle Header Visibility and Home Banner Logic
+        if (id === 'home-screen') { 
+            document.getElementById('main-header').style.display = 'flex'; 
+            currentTitle.innerText = 'OkyRajkumar'; 
+            updateHomeBanner(); 
+            updateExamBanner(); 
+            screenHistory = ['home-screen']; 
+            localStorage.removeItem('resumeScreen'); 
+            window.location.hash = '';
+        } else { 
+            document.getElementById('main-header').style.display = 'none'; 
+            currentTitle.innerText = title; 
+            localStorage.setItem('resumeScreen', id); 
+            window.location.hash = id;
+        } 
+        window.scrollTo(0, 0);
+    }
+    
+    function goBack() { 
+        if (screenHistory.length > 1) {
+            screenHistory.pop();
+            const previousScreenId = screenHistory[screenHistory.length - 1];
+            navigateTo(previousScreenId, 'OkyRajkumar');
+        } else {
+            navigateTo('home-screen', 'OkyRajkumar');
+        }
+    }
+    
+    // 3. Initial Startup Logic 
+    window.addEventListener('load', () => {
+        let targetId = 'home-screen';
+        
+        // --- FIX APPLIED HERE: FORCE HOME SCREEN ON LOAD ---
+        // We ignore the saved resumeScreen and URL hash and explicitly set targetId = 'home-screen'
+        targetId = 'home-screen';
+        
+        // The rest of the logic remains the same to ensure initialization is correct
+        renderStudyLogs(); 
+
+        setTimeout(() => { 
+            document.getElementById('splash-screen').style.display = 'none'; 
+            
+            screenHistory = [targetId]; 
+            // Note: If targetId is always 'home-screen', this is the only element in the array
+            
+            navigateTo(targetId, 'OkyRajkumar'); 
+            
+            // Time Table initialization is only needed if we were loading TT screen, but since 
+            // we force home screen, this block is largely inactive on startup.
+            if (targetId === 'timetable-screen') {
+                const todayFull = getTodayShortName();
+                const todayShort = todayFull.slice(0, 3);
+                const todayPill = document.querySelector(`.day-pill[onclick*="'${todayShort}'"]`);
+                if (todayPill) {
+                    switchDay(todayFull, todayPill);
+                }
+            }
+        }, 2000);
+    });
+
+    // --- All other functions (Time Table, Study Zone, GPA, etc.) unchanged from previous fix ---
+
+    let ttData = JSON.parse(localStorage.getItem('ttData')) || []; 
+    let currentTTDay = 'Monday';
+    
+    function getTodayShortName() {
+        return new Date().toLocaleDateString('en-US', { weekday: 'long' });
+    }
+
+    function openTimeTable() { 
+        navigateTo('timetable-screen', 'Time Table'); 
+        const todayFull = getTodayShortName();
+        const todayShort = todayFull.slice(0, 3);
+        const todayPill = document.querySelector(`.day-pill[onclick*="'${todayShort}'"]`); 
+        
+        if (todayPill) {
+             switchDay(todayFull, todayPill);
+        } else {
+             const defaultPill = document.querySelector('.day-pill[onclick*="Monday"]');
+             document.querySelectorAll('.day-pill').forEach(p => p.classList.remove('active'));
+             if (defaultPill) defaultPill.classList.add('active');
+             currentTTDay = 'Monday';
+             document.getElementById('tt-day-title').innerText = "Monday's Schedule";
+             renderTimeTableList(); 
+        }
+    }
+    
+    function switchDay(fullDay, element) { 
+        currentTTDay = fullDay; 
+        document.getElementById('tt-day-title').innerText = fullDay + "'s Schedule"; 
+        document.querySelectorAll('.day-pill').forEach(p => p.classList.remove('active')); 
+        
+        if (element) {
+            element.classList.add('active');
+        } else {
+            const shortDay = fullDay.slice(0, 3);
+            const targetPill = document.querySelector(`.day-pill[onclick*="'${shortDay}'"]`);
+            if (targetPill) targetPill.classList.add('active');
+        }
+
+        renderTimeTableList(); 
+    }
+    
+    function renderTimeTableList() { 
+        const list = document.getElementById('timetable-list'); 
+        list.innerHTML = ''; 
+        const dayClasses = ttData.filter(x => x.day === currentTTDay).sort((a,b) => a.startTime.localeCompare(b.startTime)); 
+        
+        if(dayClasses.length === 0) { 
+            list.innerHTML = `<div class="not-available-box"><i class="fas fa-calendar-times" style="font-size:3rem; margin-bottom:10px;"></i><p>No classes scheduled for ${currentTTDay}</p></div>`; 
+            return; 
+        } 
+        dayClasses.forEach(cls => { 
+            list.innerHTML += `<div class="tt-card"><div class="tt-info"><h4>${cls.sub}</h4><p><i class="fas fa-map-marker-alt"></i> ${cls.room || 'N/A'}</p></div><div style="text-align:right"><div class="tt-time">${cls.startTime} - ${cls.endTime}</div><i class="fas fa-trash" onclick="deleteTT(${cls.id})" style="color:var(--danger-color); margin-top:10px; cursor:pointer;"></i></div></div>`; 
+        }); 
+    }
+    
+    function openTTModal() { 
+        document.getElementById('tt-subject').value = ''; 
+        document.getElementById('tt-start-time').value = '';
+        document.getElementById('tt-end-time').value = '';
+        document.getElementById('tt-room').value = ''; 
+        document.getElementById('tt-modal').style.display = 'flex'; 
+    }
+    function closeTTModal(event) { 
+        if (!event || event.target.id === 'tt-modal') {
+            document.getElementById('tt-modal').style.display = 'none'; 
+        }
+    }
+    
+    function addTimeTableEntry() { 
+        const sub = document.getElementById('tt-subject').value.trim(), 
+              startTime = document.getElementById('tt-start-time').value, 
+              endTime = document.getElementById('tt-end-time').value,
+              room = document.getElementById('tt-room').value.trim(); 
+        
+        if (!sub || !startTime || !endTime) return alert("Subject, Start Time, and End Time required!"); 
+        if (startTime >= endTime) return alert("Start time must be before End time!");
+
+        ttData.push({ id: Date.now(), day: currentTTDay, sub, startTime, endTime, room }); 
+        localStorage.setItem('ttData', JSON.stringify(ttData)); 
+        
+        closeTTModal(); 
+        renderTimeTableList(); 
+        updateHomeBanner();
+    }
+    
+    function deleteTT(id) { 
+        if(confirm("Delete class?")) { 
+            ttData = ttData.filter(cls => cls.id !== id);
+            localStorage.setItem('ttData', JSON.stringify(ttData)); 
+            renderTimeTableList(); 
+            updateHomeBanner(); 
+        } 
+    }
+    
+    function updateHomeBanner() { 
+        const daysMap = { 0: "Sunday", 1: "Monday", 2: "Tuesday", 3: "Wednesday", 4: "Thursday", 5: "Friday", 6: "Saturday" }; 
+        const now = new Date(); 
+        const todayName = daysMap[now.getDay()]; 
+        const nowMinutes = now.getHours() * 60 + now.getMinutes(); 
+        
+        const todaysClasses = ttData.filter(x => x.day === todayName).sort((a,b) => a.startTime.localeCompare(b.startTime)); 
+        let nextClass = null; 
+        let minDiff = Infinity; 
+        
+        for (const cls of todaysClasses) {
+            const [startH, startM] = cls.startTime.split(':').map(Number); 
+            const [endH, endM] = cls.endTime.split(':').map(Number);
+            const classStartMinutes = startH * 60 + startM; 
+            const classEndMinutes = endH * 60 + endM;
+            
+            if (nowMinutes >= classStartMinutes && nowMinutes < classEndMinutes) {
+                const minutesLeft = classEndMinutes - nowMinutes;
+                nextClass = cls;
+                nextClass.status = 'running';
+                nextClass.timeInfo = `Running (Ends in ${minutesLeft} mins) • Room ${cls.room || 'N/A'}`;
+                break; 
+            }
+        }
+        
+        if (!nextClass) {
+            todaysClasses.forEach(cls => { 
+                const [startH, startM] = cls.startTime.split(':').map(Number); 
+                const classStartMinutes = startH * 60 + startM; 
+                
+                const diff = classStartMinutes - nowMinutes;
+                if (diff > 0 && diff < minDiff) { 
+                    minDiff = diff; 
+                    nextClass = cls; 
+                    nextClass.status = 'upcoming';
+                }
+            }); 
+            if (nextClass) {
+                nextClass.timeInfo = minDiff < 60 
+                                     ? `Starting in ${minDiff} mins (At ${nextClass.startTime})`
+                                     : `At ${nextClass.startTime} • Room ${nextClass.room || 'N/A'}`; 
+            }
+        }
+        
+        const subEl = document.getElementById('banner-subject'), timeEl = document.getElementById('banner-time'); 
+        const bannerEl = document.getElementById('upcoming-banner');
+
+        if (nextClass) { 
+            subEl.innerText = nextClass.sub; 
+            timeEl.innerText = nextClass.timeInfo;
+            bannerEl.style.background = nextClass.status === 'running' 
+                                        ? 'linear-gradient(135deg, #10b981, #059669)' 
+                                        : 'linear-gradient(135deg, #f59e0b, #d97706)'; 
+        } else { 
+            subEl.innerText = "No Upcoming Classes"; 
+            timeEl.innerText = "Relax & Enjoy your free time!"; 
+            bannerEl.style.background = 'linear-gradient(135deg, #3b82f6, #2563eb)'; 
+        } 
+    }
+
+    const sub1st = ["Maths-I", "Physics", "IBE", "Comm. Skills", "CFP", "Maths-II", "Chemistry", "BEE", "EME", "MEFA", "Practical-1st"];
+    const sub3rd_core = ["Adv Maths", "Digital Electronics", "DSA", "OOPs (C++)", "Software Engg"];
+    const sub4th_core = ["Discrete Maths", "Microprocessor", "TOC", "DBMS", "Python", "Java", "Practical-4th"];
+    
+    const subjectDefinitions = {
+        V_CORE: ["Operating Systems", "Computer Organization and Architecture", "Computer Networks"],
+        VI_CORE: ["Compiler Design", "Design and Analysis of Algorithms"],
+        V_CSIT: ["Cloud Computing and DevOps Tools", "Machine Learning", "Human Computer Interaction"],
+        V_CYBER: ["Information Security Management", "Cryptography and Information Security", "Smart Systems"],
+        V_AIML_SPECIFIC: ["Machine Learning and its Applications", "Mathematical Foundation Course", "Information Security Systems"], 
+        V_ELECTIVES_CSIT: [
+            "Introduction to Data Science", "Distributed Systems", "Augmented Reality and Virtual Reality", 
+            "Introduction to Blockchain", "Data Mining and Warehousing"
+        ],
+        V_ELECTIVES_CYBERAIML: ["Introduction to Data Science", "Distributed Systems", "Cloud Computing", "Introduction to Blockchain", "Data Mining and Warehousing"],
+        VI_CS: ["Information Security Systems (VI)", "Digital Image Processing", "Introduction to Internet of Things"],
+        VI_IT: ["Information Security Systems (VI)", "Mobile Computing", "Introduction to Internet of Things"],
+        VI_CYBER: ["Application and Network Security Fundamentals", "Network System Vulnerability Assessment", "Introduction to Cyber Crime, Law and Investigation"],
+        VI_AIML: ["Big Data Analytics", "Digital Image Processing", "Deep Learning"],
+        VI_ELECTIVES_CSIT: ["Artificial Intelligence", "Big Data Analytics", "Natural Language Processing"],
+        VI_ELECTIVES_CYBER: ["Internet of Things", "Soft Computing and Evolutionary Algorithms", "Information Theory & Coding"],
+        VI_ELECTIVES_AIML: ["Internet of Things", "Pattern Recognition", "GPU Computing"],
+    };
+
+    const generalLinks = {
+        "PYQ_1st": "", "PYQ_3rd": "", "PYQ_4th": "", "PYQ_5th": "", "PYQ_6th": "", "PYQ_7th": "", "PYQ_8th": "",  
+        "Syl_1st": "", "Syl_2nd": "", "Syl_3rd": "", "Syl_4th": "", "Work_Theory": "",    "Work_Practical": ""
+    };
+    const noticesDriveLink = "";
+    const resourceDatabase = {
+        "Maths-I": { "Notes": "https://drive.google.com/drive/folders/18XXEBuAeEEKKgO-BJ3i2qeoHXBZbxD2c" },
+        "Physics": { "Notes": "" }, "DSA": { "Notes": "" }, "Practical-1st": { "Notes": "" },
+    };
+
+    function startStudyZone() { navigateTo('year-select-screen', 'Select Year'); }
+    function loadSubjects(type) { renderSubjects(sub1st, '1st Year'); }
+    
+    function renderSubjects(list, title) {
+        const c = document.getElementById('subjects-container'); c.innerHTML = '';
+        document.getElementById('subject-list-title').innerText = title;
+        document.querySelector('#subject-list-screen .back-nav').onclick = () => { goBack(); };
+
+        list.forEach(item => {
+            if (typeof item === 'object' && item.isElective) {
+                const d = document.createElement('div'); d.className = 'card full-width-card';
+                d.style.height = '100px'; d.style.background = 'linear-gradient(135deg, #059669, #10b981)'; 
+                d.innerHTML = `<div class="card-icon-circle"><i class="fas fa-list-check" style="color:white;"></i></div><h3 style="font-size: 1.2rem; color:white;">Discipline Elective</h3>`;
+                d.onclick = () => { renderElectives(item.electives, title); };
+                c.appendChild(d);
+            } else {
+                const d = document.createElement('div'); d.className = 'setting-item';
+                d.innerHTML = `<span>${item}</span> <i class="fas fa-chevron-right" style="color:var(--text-secondary)"></i>`;
+                d.onclick = () => { 
+                    document.getElementById('current-subject-name').innerText = item; 
+                    navigateTo('subject-dashboard-screen', item); 
+                };
+                c.appendChild(d);
+            }
+        });
+        navigateTo('subject-list-screen', title);
+    }
+    
+    function renderElectives(list, parentTitle) {
+        const c = document.getElementById('subjects-container'); c.innerHTML = '';
+        document.getElementById('subject-list-title').innerText = "Discipline Electives";
+        
+        screenHistory.push('subject-list-screen-electives');
+        
+        document.querySelector('#subject-list-screen .back-nav').onclick = () => { goBack(); };
+
+        list.forEach(subject => {
+            const d = document.createElement('div'); d.className = 'setting-item';
+            d.innerHTML = `<span>${subject}</span> <i class="fas fa-chevron-right" style="color:var(--text-secondary)"></i>`;
+            d.onclick = () => { 
+                document.getElementById('current-subject-name').innerText = subject; 
+                navigateTo('subject-dashboard-screen', subject); 
+            };
+            c.appendChild(d);
+        });
+    }
+
+    function load2ndYearSubjects() {
+        const branch = document.getElementById('branch-select').value;
+        const sem = document.getElementById('sem-select').value;
+        let list;
+
+        if (sem === '3rd') {
+            list = [...sub3rd_core];
+            if (branch === 'AIML') { list.push("AIML"); } else if (branch === 'Cyber') { list.push("Cyber Security (ICS)"); } else { list.push("Linux (LSP)"); }
+            list.push("Practical-3rd");
+        } else { list = [...sub4th_core]; }
+        
+        renderSubjects(list, `${branch} - ${sem} Sem`); 
+    }
+
+    function load3rdYearSubjects() {
+        const branch = document.getElementById('branch-select-3rd').value;
+        const sem = document.getElementById('sem-select-3rd').value;
+        let list = []; 
+        let electiveList = [];
+
+        if (sem === '5th') {
+            list.push(...subjectDefinitions.V_CORE);
+            if (branch === 'CS' || branch === 'IT') { list.push(...subjectDefinitions.V_CSIT); electiveList = subjectDefinitions.V_ELECTIVES_CSIT; } 
+            else if (branch === 'Cyber') { list.push(...subjectDefinitions.V_CYBER); electiveList = subjectDefinitions.V_ELECTIVES_CYBERAIML; } 
+            else if (branch === 'AIML') { list.push(...subjectDefinitions.V_AIML_SPECIFIC); electiveList = subjectDefinitions.V_ELECTIVES_CYBERAIML; }
+            list.push("Practical-5th");
+        } else { 
+            list.push(...subjectDefinitions.VI_CORE);
+            if (branch === 'CS') { list.push(...subjectDefinitions.VI_CS); electiveList = subjectDefinitions.VI_ELECTIVES_CSIT; } 
+            else if (branch === 'IT') { list.push(...subjectDefinitions.VI_IT); electiveList = subjectDefinitions.VI_ELECTIVES_CSIT; } 
+            else if (branch === 'Cyber') { list.push(...subjectDefinitions.VI_CYBER); electiveList = subjectDefinitions.VI_ELECTIVES_CYBER; } 
+            else if (branch === 'AIML') { list.push(...subjectDefinitions.VI_AIML); electiveList = subjectDefinitions.VI_ELECTIVES_AIML; }
+            list.push("Practical-6th");
+        }
+        
+        list.push({ isElective: true, electives: electiveList });
+        renderSubjects(list, `3rd Year (${branch} - ${sem} Sem)`);
+    }
+    
+    function openExternalLink(url) {
+        window.open(url, '_blank');
+    }
+
+    function handleResourceClick(key, name) {
+        const link = generalLinks[key];
+        if (link && link.trim() !== "") {
+            openExternalLink(link);
+        } else {
+            showUnavailable(name);
+        }
+    }
+    
+    function openResource(type) {
+        const subjectName = document.getElementById('current-subject-name').innerText;
+        const link = resourceDatabase[subjectName] ? resourceDatabase[subjectName][type] : "";
+
+        if (link && link.trim() !== "") {
+            openExternalLink(link);
+        } else {
+            showUnavailable(subjectName + " " + type);
+        }
+    }
+    
+    function showUnavailable(itemName) {
+        const listContainer = document.getElementById('resource-list');
+        document.getElementById('resource-modal-title').innerText = "Not Available";
+        document.getElementById('resource-subject-name').innerText = itemName;
+        listContainer.innerHTML = `<div class="not-available-box"><i class="fas fa-exclamation-circle" style="font-size:3rem; margin-bottom:10px;"></i><p>Uploaded Soon</p></div>`;
+        document.getElementById('resource-modal').style.display = 'flex';
+    }
+    
+    function closeResourceModal(event) { 
+          if (!event || event.target.id === 'resource-modal') {
+              document.getElementById('resource-modal').style.display = 'none'; 
+          }
+    }
+
+    function openNotices() {
+        if (noticesDriveLink && noticesDriveLink.trim() !== "") {
+            openExternalLink(noticesDriveLink);
+        } else {
+            const list = document.getElementById('notices-list'); 
+            list.innerHTML = `<div class="not-available-box"><i class="fas fa-bell-slash" style="font-size:3rem; margin-bottom:10px;"></i><p>No Notices Available</p></div>`;
+            navigateTo('notices-screen', 'Orders');
+        }
+    }
+
+    let studyLogData = JSON.parse(localStorage.getItem('studyLogData')) || [];
+    function openStudyLog() { navigateTo('study-log-screen', 'Study Log'); renderStudyLogs(); }
+    function openLogModal() { document.getElementById('log-modal').style.display = 'flex'; }
+    function closeLogModal(event) { 
+        if (!event || event.target.id === 'log-modal') {
+            document.getElementById('log-modal').style.display = 'none';
+            document.getElementById('log-title').value = '';
+            document.getElementById('log-content').value = '';
+        }
+    }
+    function saveLogEntry() {
+        const title = document.getElementById('log-title').value.trim();
+        const content = document.getElementById('log-content').value.trim();
+        if (!title && !content) { alert("Please enter a Title or Content."); return; }
+        const newEntry = { id: Date.now(), title: title || "Untitled Log", content: content || "No content saved.", date: new Date().toLocaleDateString('en-IN') };
+        studyLogData.unshift(newEntry);
+        localStorage.setItem('studyLogData', JSON.stringify(studyLogData));
+        closeLogModal();
+        renderStudyLogs();
+    }
+    function deleteLog(id) {
+        if(confirm("Are you sure you want to delete this log entry?")) {
+            studyLogData = studyLogData.filter(log => log.id !== id);
+            localStorage.setItem('studyLogData', JSON.stringify(studyLogData));
+            renderStudyLogs();
+        }
+    }
+    function renderStudyLogs() {
+        const c = document.getElementById('log-list'); c.innerHTML = '';
+        if (studyLogData.length === 0) {
+            c.innerHTML = `<div class="not-available-box"><i class="fas fa-clipboard" style="font-size:3rem; margin-bottom:10px;"></i><p>No log entries yet. Click '+' to add one!</p></div>`;
+            return;
+        }
+        studyLogData.forEach(log => {
+            const displayContent = log.content.length > 100 ? log.content.substring(0, 100) + '...' : log.content;
+            c.innerHTML += `<div class="log-entry"><div class="log-content"><h4>${log.title}</h4><p>${displayContent}</p><p style="font-size:0.75rem; color:var(--primary-color); margin-top:5px;">${log.date}</p></div><i class="fas fa-trash" onclick="deleteLog(${log.id})"></i></div>`;
+        });
+    }
+
+    let attData = JSON.parse(localStorage.getItem('attData')) || [];
+    function openAttendance() { navigateTo('attendance-screen', 'Attendance'); renderAttendance(); }
+    function addAttendanceSubject() { const name = document.getElementById('new-att-subject').value.trim(); if (!name) return; attData.push({ name: name, present: 0, total: 0 }); localStorage.setItem('attData', JSON.stringify(attData)); renderAttendance(); document.getElementById('new-att-subject').value = ''; }
+    function markAtt(i, type) { if (type === 'P') { attData[i].present++; attData[i].total++; } else if (type === 'A') { attData[i].total++; } localStorage.setItem('attData', JSON.stringify(attData)); renderAttendance(); }
+    function deleteAtt(i) { if(confirm("Delete subject?")) { attData.splice(i, 1); localStorage.setItem('attData', JSON.stringify(attData)); renderAttendance(); } }
+    function renderAttendance() { 
+        const c = document.getElementById('attendance-list'); c.innerHTML = ''; 
+        if (attData.length === 0) { c.innerHTML = `<div class="not-available-box"><i class="fas fa-chart-line" style="font-size:3rem; margin-bottom:10px;"></i><p>Add subjects to track attendance.</p></div>`; return; }
+        attData.forEach((s, i) => { 
+            const p = s.total === 0 ? 0 : Math.round((s.present / s.total) * 100); 
+            const col = p >= 75 ? 'var(--success-color)' : (p >= 60 ? '#f59e0b' : 'var(--danger-color)'); 
+            c.innerHTML += `<div class="att-card"><div class="att-header"><h3>${s.name}</h3><i class="fas fa-trash" onclick="deleteAtt(${i})" style="color:var(--text-secondary); cursor:pointer;"></i></div><div class="att-stats-row"><div><span style="font-size:0.8rem; color:var(--text-secondary);">Present / Total</span><div style="font-weight:600; font-size:1.1rem;">${s.present} / ${s.total}</div></div><div class="att-percentage" style="color:${col}">${p}%</div></div><div class="progress-track"><div class="progress-bar" style="width:${p}%; background:${col}"></div></div><div class="att-buttons"><button class="att-btn btn-p" onclick="markAtt(${i},'P')">Present</button><button class="att-btn btn-a" onclick="markAtt(${i},'A')">Absent</button></div></div>`; 
+        }); 
+    }
+    
+    let examData = JSON.parse(localStorage.getItem('examData')) || [];
+    function openExamPlanner() { navigateTo('exam-screen', 'Exam Planner'); renderExams(); }
+    function addExam() { 
+        const s = document.getElementById('exam-subject').value.trim(), d = document.getElementById('exam-date').value; 
+        if (!s || !d) { alert("Please enter both Subject and Date."); return; } 
+        examData.push({ sub: s, date: d }); 
+        localStorage.setItem('examData', JSON.stringify(examData)); 
+        document.getElementById('exam-subject').value = '';
+        document.getElementById('exam-date').value = '';
+        renderExams(); 
+        updateExamBanner(); 
+    }
+    function deleteExam(i) { examData.splice(i, 1); localStorage.setItem('examData', JSON.stringify(examData)); renderExams(); updateExamBanner(); }
+    function renderExams() { 
+        const c = document.getElementById('exam-list'); c.innerHTML = ''; 
+        const sortedExams = [...examData].sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        if (sortedExams.length === 0) { c.innerHTML = `<div class="not-available-box"><i class="fas fa-calendar-alt" style="font-size:3rem; margin-bottom:10px;"></i><p>No exams planned.</p></div>`; return; }
+        sortedExams.forEach((x, i) => { 
+            const now = new Date(); now.setHours(0,0,0,0);
+            const exDate = new Date(x.date); exDate.setHours(0,0,0,0);
+            const diffTime = exDate - now; 
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+            const color = diffDays < 5 && diffDays >= 0 ? 'var(--danger-color)' : (diffDays < 0 ? 'var(--text-secondary)' : 'var(--success-color)'); 
+            const daysText = diffDays === 0 ? "Today!" : (diffDays === 1 ? "Tomorrow" : (diffDays < 0 ? "Past Exam" : `${diffDays} Days Left`));
+
+            const originalIndex = examData.findIndex(e => e.sub === x.sub && e.date === x.date);
+            
+            c.innerHTML += `<div class="setting-item"><div><h4>${x.sub}</h4><p style="font-size:0.8rem; color:var(--text-secondary)">${x.date} • <b style="color:${color}">${daysText}</b></p></div><i class="fas fa-trash" onclick="deleteExam(${originalIndex})" style="color:var(--text-secondary)"></i></div></div>`; 
+        }); 
+    }
+    
+    function updateExamBanner() { 
+        const now = new Date(); now.setHours(0,0,0,0); 
+        let nextExam = null; 
+        let minDiff = Infinity; 
+        
+        examData.forEach(ex => { 
+            const exDate = new Date(ex.date); exDate.setHours(0,0,0,0); 
+            const diffTime = exDate - now; 
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+            
+            if (diffDays >= 0 && diffDays < minDiff) { 
+                minDiff = diffDays; 
+                nextExam = { ...ex, daysLeft: diffDays }; 
+            } 
+        }); 
+        
+        const subjectEl = document.getElementById('exam-banner-subject'), daysEl = document.getElementById('exam-banner-days'); 
+        if (nextExam) { 
+            subjectEl.innerText = nextExam.sub; 
+            daysEl.innerText = nextExam.daysLeft === 0 ? "Today!" : (nextExam.daysLeft === 1 ? "Tomorrow" : `${nextExam.daysLeft} Days Left`); 
+        } else { 
+            subjectEl.innerText = "No Exam"; 
+            daysEl.innerText = "Plan your next test!"; 
+        } 
+    }
+
+    let sgpaRowsData = JSON.parse(localStorage.getItem('sgpaRowsData')) || [];
+    let cgpaRowsData = JSON.parse(localStorage.getItem('cgpaRowsData')) || [];
+
+    function openCGPA() { 
+        navigateTo('cgpa-screen', 'GPA Calc'); 
+        renderSGPARows();
+        renderCGPARows();
+        const lastCalc = localStorage.getItem('lastCalcType') || 'sgpa'; 
+        switchCalc(lastCalc, false); 
+    } 
+
+    function switchCalc(type, saveContext = true) { 
+        document.getElementById('sgpa-panel').style.display = type === 'sgpa' ? 'block' : 'none'; 
+        document.getElementById('cgpa-panel').style.display = type === 'cgpa' ? 'block' : 'none'; 
+        const btnSgpa = document.getElementById('btn-sgpa'), btnCgpa = document.getElementById('btn-cgpa'); 
+        if(type === 'sgpa') { 
+            btnSgpa.style.background = 'var(--primary-color)'; btnSgpa.style.color = 'white'; 
+            btnCgpa.style.background = 'transparent'; btnCgpa.style.color = 'var(--text-color)'; 
+        } else { 
+            btnCgpa.style.background = 'var(--primary-color)'; btnCgpa.style.color = 'white'; 
+            btnSgpa.style.background = 'transparent'; btnSgpa.style.color = 'var(--text-color)'; 
+        } 
+        if (saveContext) {
+            localStorage.setItem('lastCalcType', type);
+        }
+    } 
+    
+    function renderSGPARows() {
+        const rowsContainer = document.getElementById('sgpa-rows');
+        rowsContainer.innerHTML = '';
+        if (sgpaRowsData.length === 0) {
+            sgpaRowsData = [{ sub: '', credit: '', grade: '' }, { sub: '', credit: '', grade: '' }];
+            saveSGPARows();
+        }
+
+        sgpaRowsData.forEach((row, index) => {
+            const div = document.createElement('div'); div.className = 'cgpa-row'; 
+            div.innerHTML = `
+                <input type="text" placeholder="Subject" style="margin:0" value="${row.sub}" oninput="updateSGPARow(${index}, 'sub', this.value)">
+                <input type="number" class="sgpa-cr" placeholder="Cr" min="1" max="5" style="margin:0" value="${row.credit}" oninput="updateSGPARow(${index}, 'credit', this.value)">
+                <input type="number" class="sgpa-gr" placeholder="Gr" min="0" max="10" style="margin:0" value="${row.grade}" oninput="updateSGPARow(${index}, 'grade', this.value)">
+                <i class="fas fa-times" style="color:var(--danger-color); cursor:pointer;" onclick="deleteSGPARow(${index})"></i>`; 
+            rowsContainer.appendChild(div); 
+        });
+    }
+
+    function addSGPARow() { 
+        sgpaRowsData.push({ sub: '', credit: '', grade: '' });
+        saveSGPARows();
+        renderSGPARows();
+    } 
+
+    function updateSGPARow(index, key, value) {
+        sgpaRowsData[index][key] = value;
+        saveSGPARows();
+    }
+    
+    function deleteSGPARow(index) {
+        if (sgpaRowsData.length > 1 && confirm("Delete this subject?")) {
+            sgpaRowsData.splice(index, 1);
+            saveSGPARows();
+            renderSGPARows();
+            document.getElementById('sgpa-result').style.display='none';
+        }
+    }
+    
+    function saveSGPARows() {
+        localStorage.setItem('sgpaRowsData', JSON.stringify(sgpaRowsData));
+    }
+    
+    function calculateSGPA() { 
+        let pts = 0, totCr = 0; 
+        let valid = true;
+        const activeRows = sgpaRowsData.filter(row => row.credit.trim() !== '' || row.grade.trim() !== '');
+
+        if (activeRows.length === 0) {
+            alert("Please enter at least one subject with valid Credit and Grade.");
+            document.getElementById('sgpa-result').style.display='none';
+            return;
+        }
+
+        activeRows.forEach(row => {
+            let c = parseFloat(row.credit), g = parseFloat(row.grade);
+            
+            if (isNaN(c) || isNaN(g) || g < 0 || g > 10 || c <= 0) { 
+                 valid = false;
+            } else {
+                pts += c * g; 
+                totCr += c; 
+            }
+        });
+        
+        if (!valid) {
+            alert("Please ensure all entered Credit/Grade inputs are valid numbers (Credit > 0, Grade 0-10).");
+            document.getElementById('sgpa-result').style.display='none';
+            return;
+        }
+
+        if(totCr > 0) { 
+            document.getElementById('sgpa-value').innerText = (pts/totCr).toFixed(2); 
+            document.getElementById('sgpa-result').style.display='block'; 
+        } else {
+            document.getElementById('sgpa-result').style.display='none';
+            alert("Calculation failed. Total credits must be greater than zero.");
+        }
+    } 
+
+    function renderCGPARows() {
+        const rowsContainer = document.getElementById('cgpa-rows');
+        rowsContainer.innerHTML = '';
+        if (cgpaRowsData.length === 0) {
+            cgpaRowsData = [{ sgpa: '' }, { sgpa: '' }];
+            saveCGPARows();
+        }
+
+        cgpaRowsData.forEach((row, index) => {
+            const div = document.createElement('div'); div.className = 'cgpa-row'; 
+            div.style.gap = '10px'; 
+            div.innerHTML = `
+                <input type="number" class="sem-sgpa" placeholder="Semester ${index + 1} SGPA" min="0" max="10" step="0.01" style="margin:0" value="${row.sgpa}" oninput="updateCGPARow(${index}, this.value)">
+                <i class="fas fa-times" style="color:var(--danger-color); cursor:pointer;" onclick="deleteCGPARow(${index})"></i>`; 
+            rowsContainer.appendChild(div); 
+        });
+    }
+
+    function addCGPARow() { 
+        cgpaRowsData.push({ sgpa: '' });
+        saveCGPARows();
+        renderCGPARows();
+    }
+
+    function updateCGPARow(index, value) {
+        cgpaRowsData[index].sgpa = value;
+        saveCGPARows();
+    }
+
+    function deleteCGPARow(index) {
+        if (cgpaRowsData.length > 1 && confirm("Delete this semester?")) {
+            cgpaRowsData.splice(index, 1);
+            saveCGPARows();
+            renderCGPARows();
+            document.getElementById('cgpa-result').style.display='none';
+        }
+    }
+    
+    function saveCGPARows() {
+        localStorage.setItem('cgpaRowsData', JSON.stringify(cgpaRowsData));
+    }
+
+    function calculateFinalCGPA() { 
+        let sum = 0, count = 0; 
+        let valid = true;
+
+        const activeRows = cgpaRowsData.filter(row => row.sgpa.trim() !== '');
+
+        if (activeRows.length === 0) {
+            alert("Please enter at least one SGPA value.");
+            document.getElementById('cgpa-result').style.display='none';
+            return;
+        }
+
+        activeRows.forEach(row => { 
+            let val = parseFloat(row.sgpa); 
+            if (isNaN(val) || val < 0 || val > 10) { 
+                valid = false;
+            } else {
+                sum += val; 
+                count++; 
+            }
+        }); 
+        
+        if (!valid) {
+            alert("Please ensure all entered SGPA inputs are valid numbers (0-10).");
+            document.getElementById('cgpa-result').style.display='none';
+            return;
+        }
+
+        if(count > 0) { 
+            document.getElementById('cgpa-value').innerText = (sum/count).toFixed(2); 
+            document.getElementById('cgpa-result').style.display='block'; 
+        } else {
+            document.getElementById('cgpa-result').style.display='none';
+            alert("Calculation failed. Please check your inputs.");
+        }
+    }
+</script>
+</body>
+</html>
